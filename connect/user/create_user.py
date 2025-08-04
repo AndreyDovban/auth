@@ -17,13 +17,21 @@ def create_user(id, name, description, role, password):
         target_user = cur.fetchone()[0]
         print(target_user)
 
-        hashAndSalt = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
+        salt = bcrypt.gensalt()
+
+        hashAndSalt = bcrypt.hashpw(password.encode(), salt)
+
+        print(hashAndSalt)
 
         if target_user == 0:
             cur.execute(
-                f'''INSERT INTO users (uuid, name, description, role, password) 
+                f'''INSERT INTO users (uuid, name, description, role, password)
                     VALUES ("{id}", "{name}", "{description}", "{role}",  "{hashAndSalt}")'''
             )
+
+        # if target_user == 0:
+        #     cur.execute("INSERT INTO users (uuid, name, description, role, password) VALUES (?, ?, ?, ?, ?)",
+        #                 (id, name, description, role, hashAndSalt))
 
         if target_user == 1:
             return {"error": "403", "message": "User " + name + " is exists"}

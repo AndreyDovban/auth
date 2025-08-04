@@ -1,14 +1,14 @@
 'use strict';
 
-const form = document.querySelector('.form');
-const list = document.querySelector('.list');
+const form_add_user = document.querySelector('.form_add_user');
+const list_users = document.querySelector('.list_users');
 
-form.addEventListener('submit', e => {
+form_add_user.addEventListener('submit', e => {
 	e.preventDefault();
 
-	const formData = new FormData(form);
+	const formData = new FormData(form_add_user);
 
-	console.log(formData.get('name'));
+	console.log(formData.get('name'), formData.get('description'), formData.get('role'), formData.get('password'));
 
 	fetch('/api/user', {
 		method: 'POST',
@@ -32,7 +32,7 @@ function getUsers() {
 		.then(data => {
 			console.log(data);
 
-			list.innerHTML = null;
+			list_users.innerHTML = null;
 
 			for (const row of data) {
 				const tr = document.createElement('tr');
@@ -47,7 +47,7 @@ function getUsers() {
 				td.append(del);
 				del.onclick = () => deleteUser(row[0]);
 				tr.append(td);
-				list.append(tr);
+				list_users.append(tr);
 			}
 		})
 		.catch(error => {

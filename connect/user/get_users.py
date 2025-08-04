@@ -6,6 +6,8 @@ def get_users():
     with sqlite3.connect('../base.db', check_same_thread=False) as con:
         cur = con.cursor()
 
+        create_users(cur)
+
         cur.execute(
             f'''SELECT * FROM  users
                 '''

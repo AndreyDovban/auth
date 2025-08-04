@@ -4,27 +4,21 @@ import os
 from connect.user.create_user import create_user
 from connect.user.get_users import get_users
 from connect.user.delete_user import delete_users
+from connect.login.login import login
 
 
 app = Flask(__name__, static_url_path='/static')
 
 
 @app.route("/")
-def index():
-    return '<h1> Home </h1>'
-
-
-@app.route("/user")
-def user():
-    return render_template('user.html')
+def home():
+    return render_template('home.html')
 
 
 @app.route("/api/user",  methods=["GET", "POST", "DELETE"])
 # Работа с сущностью продукт
-def product():
-    os.system("clear")
-
-    print("work api product ", request.method)
+def user():
+    print("work api user ", request.method)
 
     if request.method == "GET":
         print("work")
@@ -38,6 +32,18 @@ def product():
     if request.method == "DELETE":
         user = request.get_json()
         return delete_users(user["id"])
+
+
+@app.route("/api/login",  methods=["POST"])
+# Работа с сущностью продукт
+def login_handler():
+    os.system("clear")
+
+    print("work api login ", request.method)
+
+    if request.method == "POST":
+        user = request.form
+        return login(user["name"], user["password"])
 
 
 if __name__ == "__main__":

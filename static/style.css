@@ -40,3 +40,9 @@ td {
 	max-width: 300px;
 	word-break: break-all;
 }
+
+.forms_block {
+	display: grid;
+	gap: 20px;
+	grid-template-columns: 1fr 1fr;
+}
