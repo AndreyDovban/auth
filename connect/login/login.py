@@ -16,17 +16,14 @@ def login(name, password):
         )
         user = cur.fetchone()
 
-        print("HASH", user[1],  user[4])
-
-        if user[0] is None:
+        if user is None:
+            cur.close()
             return {"error": "401", "message": "Login or password is incorrect"}
 
-        if bcrypt.checkpw(password.encode(), user[4][2:-1].encode()):
-            return user[0]
+        if bcrypt.checkpw(password.encode(), user[4].encode()):
+            cur.close()
+            return list(user)
         else:
             print("Пароль не совпадает")
+            cur.close()
             return {"error": "401", "message": "Login or password is incorrect"}
-
-        cur.close()
-
-        return user

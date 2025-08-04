@@ -16,7 +16,6 @@ form_auth.addEventListener('submit', e => {
 		.then(response => response.json())
 		.then(data => {
 			console.log(data);
-			getUsers();
 		})
 		.catch(error => {
 			console.error('Ошибка отправки:', error);
