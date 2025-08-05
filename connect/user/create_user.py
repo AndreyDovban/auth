@@ -28,9 +28,9 @@ def create_user(id, name, description, role, password):
             )
 
         if target_user == 1:
-            return {"error": "403", "message": "User " + name + " is exists"}
+            return {"code": "403", "data": "User " + name + " is exists"}
 
         con.commit()
         cur.close()
 
-        return {"message": "User added successfully"}
+        return {"code": "200", "data": "User added successfully"}

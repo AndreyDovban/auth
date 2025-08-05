@@ -15,4 +15,4 @@ def delete_users(id):
         con.commit()
         cur.close()
 
-        return {"message": "User deleted successfully"}
+        return {"code": "200", "data": "User deleted successfully"}

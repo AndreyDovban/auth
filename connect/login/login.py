@@ -18,12 +18,13 @@ def login(name, password):
 
         if user is None:
             cur.close()
-            return {"error": "401", "message": "Login or password is incorrect"}
+            return {"code": "401", "data": "Login or password is incorrect"}
 
         if bcrypt.checkpw(password.encode(), user[4].encode()):
             cur.close()
-            return list(user)
+            return {"code": "200", "data":  list(user)}
+
         else:
             print("Пароль не совпадает")
             cur.close()
-            return {"error": "401", "message": "Login or password is incorrect"}
+            return {"code": "401", "data": "Login or password is incorrect"}

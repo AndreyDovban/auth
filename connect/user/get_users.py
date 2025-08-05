@@ -16,4 +16,4 @@ def get_users():
 
         cur.close()
 
-        return data
+        return {"code": "200", "data":  data}
