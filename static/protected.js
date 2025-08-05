@@ -3,9 +3,13 @@
 const protected_button = document.querySelector('.protected_button');
 
 protected_button.onclick = () => {
-	console.log('fetch protected');
-
 	const token = localStorage.getItem('logint_token');
+
+	if (!token) {
+		console.log('token is null');
+
+		return;
+	}
 
 	fetch('/protected', {
 		method: 'GET',

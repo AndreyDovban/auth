@@ -52,12 +52,11 @@ def login_handler():
         user = request.form
         res = login(user["name"], user["password"])
         print("Name ", res["data"][1])
-        exp = datetime.datetime.now() + datetime.timedelta(minutes=30)
+        exp = datetime.datetime.now() + datetime.timedelta(hours=120, minutes=30)
         print("EXP ", exp.strftime("%Y-%m-%d %H:%M:%S"))
         payload = {
             "name": res["data"][1],
             "role": res["data"][3],
-            # Токен истекает через 30 минут
             "exp": exp
         }
         # Кодирование токена
@@ -93,11 +92,11 @@ def token_required(f):
             token, secret_key, algorithms=["HS256"])
         print(f"Decoded payload: {decoded_payload}")
 
-        if datetime.datetime.now() > decoded_payload["exp"]:
+        if datetime.datetime.now() > datetime.datetime.fromtimestamp(decoded_payload["exp"]):
             print("TOKEN EXPIRES")
             return make_response(jsonify('Неверный токен'), 401, {'WWW-Authenticate': 'Bearer realm="Login Required"'})
 
-        res = get_user_by_name(decoded_payload.name)
+        res = get_user_by_name(decoded_payload["name"])
         if res["code"] != "200":
             print("USER NOT FOUND")
             return make_response(jsonify('Неверный токен'), 401, {'WWW-Authenticate': 'Bearer realm="Login Required"'})
