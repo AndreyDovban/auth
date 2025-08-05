@@ -16,6 +16,7 @@ form_auth.addEventListener('submit', e => {
 		.then(response => response.json())
 		.then(data => {
 			console.log(data);
+			localStorage.setItem('logint_token', data.token);
 		})
 		.catch(error => {
 			console.error('Ошибка отправки:', error);
