@@ -4,7 +4,7 @@ import bcrypt
 
 
 def create_user(id, name, description, role, password):
-    with sqlite3.connect('../base.db', check_same_thread=False) as con:
+    with sqlite3.connect('../users-base.db', check_same_thread=False) as con:
         cur = con.cursor()
 
         create_users(cur)
