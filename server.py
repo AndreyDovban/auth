@@ -5,13 +5,9 @@ from connect.user.create_user import create_user
 from connect.user.get_users import get_users
 from connect.user.delete_user import delete_users
 from connect.login.login import login
-from connect.user.get_user_by_name import get_user_by_name
-import jwt
-import datetime
+from helpers.jwt import encode_jwt
+from middelwars.token_required import token_required
 
-
-# Секретный ключ
-secret_key = "your-secret-key"
 
 app = Flask(__name__, static_url_path='/static')
 
@@ -51,66 +47,14 @@ def login_handler():
     if request.method == "POST":
         user = request.form
         res = login(user["name"], user["password"])
-        print("Name ", res["data"][1])
-        exp = datetime.datetime.now() + datetime.timedelta(hours=120, minutes=30)
-        print("EXP ", exp.strftime("%Y-%m-%d %H:%M:%S"))
-        payload = {
-            "name": res["data"][1],
-            "role": res["data"][3],
-            "exp": exp
-        }
-        # Кодирование токена
-        encoded_jwt = jwt.encode(payload, secret_key, algorithm="HS256")
-        print(f"Encoded JWT: {encoded_jwt}")
-        decoded_payload = jwt.decode(
-            encoded_jwt, secret_key, algorithms=["HS256"])
-        print(f"Decoded payload: {decoded_payload}")
         if res["code"] != "200":
             return make_response(jsonify(res["data"]), res["code"])
-        return make_response(jsonify({"token": encoded_jwt}), 200)
 
-
-def token_required(f):
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        auth = request.headers.get('Authorization')
-
-        if not auth:
-            print("NOT AUTH")
-            return make_response(jsonify('Токен не предоставлен'), 401, {'WWW-Authenticate': 'Bearer realm="Login Required"'})
-
-        try:
-            token_type, token = auth.split()
-            if token_type.lower() != 'bearer':
-                print("NOT BREARE")
-                return make_response(jsonify('Неправильный формат токена'), 401, {'WWW-Authenticate': 'Bearer realm="Login Required"'})
-        except ValueError:
-            print("VALUE ERROR")
-            return make_response(jsonify('Неправильный формат токена'), 401, {'WWW-Authenticate': 'Bearer realm="Login Required"'})
-
-        decoded_payload = jwt.decode(
-            token, secret_key, algorithms=["HS256"])
-        print(f"Decoded payload: {decoded_payload}")
-
-        if datetime.datetime.now() > datetime.datetime.fromtimestamp(decoded_payload["exp"]):
-            print("TOKEN EXPIRES")
-            return make_response(jsonify('Неверный токен'), 401, {'WWW-Authenticate': 'Bearer realm="Login Required"'})
-
-        res = get_user_by_name(decoded_payload["name"])
-        if res["code"] != "200":
-            print("USER NOT FOUND")
-            return make_response(jsonify('Неверный токен'), 401, {'WWW-Authenticate': 'Bearer realm="Login Required"'})
-
-        if res["data"][3] != "admin":
-            print("PRMISSIO DENIED")
-            return make_response(jsonify('Неверный токен'), 401, {'WWW-Authenticate': 'Bearer realm="Login Required"'})
-
-        # if token not in users.values():
-        #     return make_response('Неверный токен', 401, {'WWW-Authenticate': 'Bearer realm="Login Required"'})
-
-        return f(*args, **kwargs)
-
-    return decorated
+        token = encode_jwt()
+        if token:
+            return make_response(jsonify({"token": token}), 200)
+        else:
+            return make_response(jsonify("Token is not created"), 500)
 
 
 @app.route('/protected')

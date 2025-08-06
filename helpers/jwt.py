@@ -1,7 +1,16 @@
-# import jwt
-# import datetime
+import jwt
+import datetime
+import os
 
-# # Секретный ключ
-# secret_key = "your-secret-key"
+SECRET_KEY = os.getenv("SECRET_KEY")
 
-# def create_jwt():
+
+def encode_jwt():
+    payload = {
+        "exp": datetime.datetime.now() + datetime.timedelta(hours=120, minutes=30)
+    }
+    return jwt.encode(payload, SECRET_KEY, algorithm="HS256")
+
+
+def decode_jwt(token):
+    return jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
