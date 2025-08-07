@@ -1,4 +1,3 @@
-from functools import wraps
 from flask import Flask, request, render_template, jsonify, make_response
 import uuid
 from connect.user.create_user import create_user
@@ -64,4 +63,4 @@ def protected():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(port=7000, debug=True)
